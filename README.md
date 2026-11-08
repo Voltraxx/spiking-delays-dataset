@@ -1,94 +1,285 @@
-# Systematic Mapping of Delay-Learning in Spiking Neural Networks (SNNs)
+# Delay Learning in Spiking Neural Networks: A Systematic Review — Dataset
 
-This repository contains the dataset and taxonomy for the systematic mapping study submitted to the **JCC 2026 (45th International Conference of the Chilean Computer Science Society)**. 
+This repository contains the dataset of the paper **"Delay Learning in Spiking Neural Networks: A Systematic Review"** by Juan-Pablo Cárdenas-Rueda, José Ceardi and Javier Baladrón (Departamento de Ingeniería Informática, Universidad de Santiago de Chile), **JCC 2026 (45th International Conference of the Chilean Computer Science Society)**.
 
-Our study presents a comprehensive analysis of the state-of-the-art algorithms, topologies, models and more that optimize or learn **transmission delays** in Spiking Neural Networks (SNNs) to capture temporal dynamics.
-
----
-
-## Mapping Methodology Summary (PRISMA 2020)
-
-Following the PRISMA 2020 guidelines, we searched three major databases (Web of Science, Scopus, and IEEE Xplore) using targeted query strings:
-* **Records Identified:** 319 records
-* **Duplicates Removed:** 145 records (intra- and inter- database)
-* **Records Screened (Abstract):** 174 records
-* **Full-Text Selection:** 42 papers met the strict inclusion/exclusion criteria.
+The review follows the PRISMA 2020 guidelines and covers primary, software-based studies in which the transmission delays of spiking neural networks (SNNs) are trainable parameters. The dataset lists the 42 included studies and their classification along the eight dimensions of Fig. 3 of the paper.
 
 ---
 
 ## Repository Structure
 
-* `snn_delay_learning_dataset.csv`: The complete dataset containing the taxonomy of the 42 selected papers.
-* `README.md`: This file, which serves as a data dictionary and interactive index.
+* `snn_delay_learning_dataset.csv`: one row per included study (42 rows, 15 columns).
+* `README.md`: summary of the review method, data dictionary, taxonomy definitions and summary statistics.
 
 ---
 
-## Data Dictionary & Taxonomy Definitions
+## Review Method (PRISMA 2020)
 
-To ensure reproducibility and resolve common ambiguities, we define our classification schema below:
+### Research questions
 
-### 1. Algorithm
-Defines the mathematical approach used to update/learn the connection delays:
-* **Surrogate Gradient:** Backpropagation-based methods using smooth surrogate functions to bypass the non-differentiable spiking threshold (e.g., surrogate gradient descent).
-* **STDP (Spike-Timing-Dependent Plasticity):** Local, unsupervised learning rules that adjust connection efficacy based on the relative timing of pre- and post-synaptic spikes.
-* **Temporal Adjustment:** Heuristic, analytical, or delta-like rules that adjust delays directly based on temporal differences without formal backprop gradients.
-* **NAS (Neural Architecture Search):** Search-based optimization methods used to discover discrete, optimal delay structures and configurations prior to or during training.
-* **Recursive Least Squares (RLS):** An analytical, recursive optimization method that minimizes the sum of squared errors to adjust weights and delays dynamically.
-* **Expectation-Maximization (EM):** A statistical, probabilistic framework used to maximize parameter likelihood in SNNs under noisy conditions.
-* **Neuroevolution:** Optimization of SNN parameters (delays, weights, or topology) using evolutionary or genetic algorithms (GAs).
+1. **Taxonomy and families:** What are the predominant algorithmic families underlying the current delay-learning mechanisms in software-based SNNs?
+2. **Neural dynamics:** Which spike-coding schemes and neuron models are most frequently coupled with delay learning?
+3. **Structural localization of delays:** Where are learnable delays localized within the network architectures?
 
-### 2. Neuronal Model
-The mathematical model representing single-neuron dynamics:
-* **LIF (Leaky Integrate-and-Fire):** Neurons with passive membrane decay.
-* **IF (Integrate-and-Fire):** Simple non-decaying integrators.
-* **SRM (Spiking Response Model):** Kernel-based representations of membrane potential.
-* **Izhikevich Model:** A two-dimensional, biophysically plausible model capable of reproducing complex cortical firing patterns.
-* **PSN (Probabilistic Spiking Neuron):** Models where spike generation is governed by stochastic or probabilistic processes rather than deterministic thresholds.
-* **Not identified:** Cases where the single-neuron model is custom-designed or not explicitly standardized in the paper's text.
+### Search
 
-### 3. Type of Delay
-Where the learnable/plastic delay is physically or computationally located:
-* **Axonal:** Conduction delays representing the travel time of an action potential along the axon after it is generated.
-* **Synaptic:** Localized delays at the synaptic cleft representing neurotransmitter release and receptor kinetics.
-* **Dendritic:** Delay of transmission occurring along the dendritic branches prior to somatic integration.
-* **Skip-connection delays:** Delays applied to identity or feedforward skip-connections to match temporal paths.
-* **Combinations (e.g., Synaptic + Axonal, Dendritic + Axonal):** Hybrid delay locations where multiple propagation delays are co-learned or modeled.
+Databases: **Web of Science**, **Scopus** and **IEEE Xplore**. Period: January 2013 to May 2026. Web of Science was searched with the `ALL=` field tag, Scopus with `TITLE-ABS-KEY()`, and IEEE Xplore without field prefixes. For queries with an `OR` operator, the terms were searched separately and their results were merged. AI-based semantic search tools were not used.
 
-### 4. Codification
-The encoding mechanism used to convert continuous input into discrete spike times:
-* **Temporal:** Information is encoded in the precise timing of individual spikes (e.g., Time-to-First-Spike, latency coding, or precise interval selectivity).
-* **Rate-coding:** Information is encoded in the average firing rate or spike frequency over a given time window.
-* **Phase-coding:** Information is encoded in the timing of spikes relative to an ongoing background oscillatory wave.
-* **Mixed:** Hybrid encoding schemes utilizing both average frequency and precise timing channels.
-* **Other / Not identified:** Custom, complex spatial mapping, or cases not explicitly detailed by the authors.
+| Query | Records |
+|---|---:|
+| `"delay learning" AND ("spiking neural network*" OR "SNN")` | 52 |
+| `"learnable delay*" AND ("spiking neural network*" OR "SNN")` | 8 |
+| `("synaptic delay*" OR "axonal delay*" OR "temporal delay*") AND ("spiking neural network*" OR "SNN")` | 175 |
+| `("time delay*" OR "transmission delay*") AND ("learn*" OR "train") AND ("spiking neural network*" OR "SNN")` | 78 |
+| **Total (raw counts across the three databases, including duplicates)** | **313** |
 
-### 5. Learning Type
-The paradigm under which the SNN is optimized:
-* **Supervised:** SNN trained to minimize error against a target output signal or class label.
-* **Unsupervised:** SNN organizes itself based on input statistics.
-* **Self-supervised:** The network generates its own supervisory signals from the structure of the input data.
-* **Reinforcement Learning:** Network parameters are updated based on scalar reward/punishment signals from an environment.
+### Eligibility criteria
 
-### 6. Problem Type
-The target application or computational goal:
-* **Classification:** Categorizing dynamic or static inputs into discrete classes.
-* **Regression:** Predicting continuous values, forecasting time-series events, or reproducing exact multi-spike temporal patterns.
-* **Control:** Closed-loop navigation, path planning, and autonomous robotic navigation.
-* **Feature Extraction / Clustering:** Unsupervised learning of salient representations or dividing data into similarity groups without labels.
+Inclusion:
+* **Scope:** the study proposes, implements or analyzes an active algorithmic mechanism for training or optimizing delays.
+* **Implementation:** the framework is implemented entirely in software, through computational simulation.
+* **Neuron models:** the network uses integrative, spike-based neurons (e.g., LIF, Izhikevich).
+* **Language and type of document:** primary research article (conference proceeding or journal paper) written in English.
 
-### 7. Network Type
-The architectural topology of the SNN:
-* **Feedforward:** Static layer-by-layer connections without recurrent loops.
-* **Recurrent:** Connections that form directed cycles.
-* **Convolutional:** Weight-sharing spatial kernels optimized for multidimensional spatial inputs.
-* **Single-layer:** A single layer of processing neurons.
-* **Skip-connections:** Architectures augmenting feedforward SNNs with bypass or identity skip connections (e.g., ResNet-like SNNs).
-* **Graph-like SNN:** SNNs structured as graph neural networks to aggregate dynamic spatial neighborhood relationships over time.
+Exclusion:
+* **Hardware dependency:** the delay mechanism is constrained by or designed for specific neuromorphic hardware (e.g., FPGAs, memristive hardware).
+* **Domain of the study:** the application falls strictly outside computational or artificial intelligence.
+* **Delay as a static parameter:** delays are fixed (not trainable) and learning changes other parameters only.
+* **Secondary literature:** surveys, reviews, tutorials or extended abstracts without a novel primary algorithmic contribution.
 
-### 8. Trained Parameters
-The specific parameter sets optimized during learning:
-* **Weights + Delays:** Co-learning of synaptic weights and temporal propagation delays.
-* **Weights + Delays + Threshold:** Simultaneous optimization of weights, delays, and neuronal firing thresholds.
-* **Weights + Delays + Topology:** Search-based co-optimization of connectivity structure, weights, and delays.
-* **Delays:** Architectures where weights are kept fixed, and learning is exclusively carried out in the temporal delay domain.
-* **Other:** Models where additional parameters (such as membrane time constants or adaptation thresholds) are co-learned.
+### Selection (Fig. 1 of the paper)
+
+| Stage | Records |
+|---|---:|
+| Records identified from databases | 313 |
+| Duplicate records removed before screening | 139 |
+| Records screened (title and abstract) | 174 |
+| Records excluded at screening | 114 |
+| Reports sought for retrieval | 60 |
+| Reports not retrieved | 7 |
+| Reports assessed for eligibility (full text) | 53 |
+| Reports excluded: no delay learning (delays are static) | 11 |
+| **Studies included** | **42** |
+
+---
+
+## Data Dictionary
+
+| Column | Description |
+|---|---|
+| `ID` | Row number (1–42). |
+| `Title` | Title of the study as published. |
+| `Algorithm` | Algorithmic family used to learn the delays (Fig. 3g). |
+| `Neuronal Model` | Neuron model of the network (Fig. 3a). |
+| `Type of Delay` | Location of the learnable delays (Fig. 3b). |
+| `Codification` | Spike-coding scheme (Fig. 3c). |
+| `Learning Type` | Learning paradigm (Fig. 3d). |
+| `Problem Type` | Task addressed in the experiments (Fig. 3f). |
+| `Network Type` | Network architecture (Fig. 3e). |
+| `Trained Parameters` | Parameters optimized during learning (Fig. 3h). |
+| `Indexation Year` | Year in which the record was indexed in the source database; it is the year used in Fig. 2. For conference papers it can be the year after the conference |
+| `Source` | Journal name, or conference written as `YYYY Conference Name (ACRONYM)`. |
+| `Authors` | Full names in publication order, written as `Family, Given` and separated by semicolons. |
+| `Link` | DOI link, or the official proceedings page for the papers without a DOI (IDs 19, 37 and 41). |
+| `Notes` | Short remarks on the classification: name of the method, type of gradient, and the reason for combined, `Other` or `Unidentified` labels. |
+
+The file is UTF-8 (with BOM), comma-separated, with every field that contains a comma enclosed in double quotes. In spreadsheet programs configured with a semicolon as list separator, import it with the comma as delimiter (e.g., in Excel: *Data > From Text/CSV*).
+
+---
+
+## Taxonomy Definitions
+
+Each study has exactly one value per column. Values joined with `+` mean that the study belongs to more than one category.
+
+### 1. Algorithm (Fig. 3g)
+Method used to learn or optimize the delays.
+* **Surrogate Gradient:** gradient-descent and error-backpropagation methods. The label follows Fig. 3(g) of the paper, where this category groups every gradient-based method: surrogate-gradient training (e.g., BPTT with surrogate derivatives, SLAYER) and other gradients, such as exact spike-time gradients (SpikeProp and its extensions, EventProp) and gradients computed on spike-train kernels. The `Notes` column states the type of gradient when the study makes it explicit.
+* **STDP:** local plasticity rules driven by the relative timing of pre- and postsynaptic spikes, including delay-specific variants. They are used both in unsupervised settings and in supervised schemes that add a teacher signal (e.g., ReSuMe-based methods).
+* **Temporal Adjustment:** rules that shift the delays directly from temporal differences or distributions, without backpropagated gradients.
+* **STDP + Temporal Adjustment:** combination of both families.
+* **Neuroevolution:** evolutionary or genetic algorithms that optimize delays (and possibly weights) through the fitness of a population of networks.
+* **Recursive Least Squares (RLS):** least-squares learning rules (shown as "Minimum Squares" in Fig. 3g).
+* **Expectation-Maximization (EM):** probabilistic learning that approximates the Expectation-Maximization algorithm.
+* **NAS:** neural architecture search over delay values and connection structure.
+
+### 2. Neuronal Model (Fig. 3a)
+* **Leaky Integrate-and-Fire (LIF):** integrate-and-fire neurons whose membrane potential decays toward rest (includes adaptive LIF variants).
+* **Integrate-and-Fire (IF):** non-leaky integrate-and-fire neurons.
+* **Spiking Response Model (SRM):** membrane potential expressed through response kernels (includes SRM0).
+* **Izhikevich:** two-dimensional model with a membrane and a recovery variable.
+* **Probabilistic Spiking Neuron (PSN):** spike generation governed by a probabilistic process.
+* **Unidentified:** the study does not specify a standard neuron model, or states that the method does not depend on it.
+
+### 3. Type of Delay (Fig. 3b)
+* **Synaptic:** one learnable delay per connection between a presynaptic and a postsynaptic neuron.
+* **Axonal:** one learnable delay per presynaptic neuron, applied to its output spikes before they reach all of its synapses.
+* **Dendritic + Axonal:** learnable delays on the dendrites of the postsynaptic neuron (before the soma) and on the axons.
+* **Synaptic + Axonal:** learnable synaptic and axonal delays in the same network.
+* **Skip-connection delays:** learnable delays only on the skip connections of the network.
+
+### 4. Codification (Fig. 3c)
+* **Temporal coding:** information is carried by precise spike times (e.g., time-to-first-spike, latency coding, precise spike trains).
+* **Rate coding:** information is carried by the number of spikes or the firing rate in a time window.
+* **Rate coding + Temporal coding:** both schemes are used in the same model.
+* **Phase coding:** spike times are relative to a background oscillation.
+* **Other:** a complex or non-standard encoding that does not fit the categories above.
+* **Unidentified:** the coding scheme is not specified.
+
+### 5. Learning Type (Fig. 3d)
+* **Supervised:** learning from target outputs (class labels or desired spike trains).
+* **Unsupervised:** learning from the statistics of the input only.
+* **Supervised + Unsupervised:** the study proposes both modes.
+* **Self-supervised:** the network builds its own targets from the input.
+* **Reinforcement:** learning from reward or fitness signals of an environment.
+
+### 6. Problem Type (Fig. 3f)
+* **Classification:** assigning inputs to discrete classes.
+* **Regression:** predicting continuous values or times, such as forecasting event sequences or reproducing target spike trains.
+* **Classification + Regression:** experiments of both kinds.
+* **Control:** closed-loop control and path planning of robots.
+* **Clustering:** grouping inputs without labels.
+* **Feature Extraction:** unsupervised learning of spatiotemporal features (shown as "Characteristics Extraction" in Fig. 3f).
+* **Unidentified:** no experimental task is reported.
+
+### 7. Network Type (Fig. 3e)
+* **Feedforward:** multilayer networks without recurrent connections.
+* **Single-layer:** a single layer of learning neurons.
+* **Convolutional:** convolutional SNNs.
+* **Feedforward + Convolutional:** networks with both convolutional and fully connected feedforward layers, or experiments with both.
+* **Recurrent:** networks with recurrent connections.
+* **Recurrent + Feedforward:** experiments with both recurrent and feedforward networks.
+* **Skip-connections:** networks with skip connections.
+* **Graph-like:** spiking graph neural networks.
+
+### 8. Trained Parameters (Fig. 3h)
+* **Weights + Delays:** synaptic weights and delays are learned together.
+* **Weights + Delays + Threshold:** weights, delays and firing thresholds.
+* **Weights + Delays + Topology:** weights and delays, while the connectivity also changes (pruning and rewiring, removal of redundant delays, or architecture search).
+* **Delays:** only delays are learned; the weights are fixed.
+* **Other:** other combinations, such as weights and delays together with membrane or synaptic time constants, thresholds or adaptation parameters, or delays at two locations (see `Notes`).
+
+---
+
+## Summary Statistics
+
+All values below are computed from `snn_delay_learning_dataset.csv`.
+
+### Counting rule
+
+In Fig. 3 of the paper, a study with a combined value (e.g., `Synaptic + Axonal`) is counted once in each of its categories. For this reason, the totals of panels (b), (c), (d), (e), (f) and (g) are larger than 42, and the percentages of Fig. 3 are shares of those totals. The last column of each table gives the share of the 42 studies.
+
+### Fig. 2: studies per indexation year
+
+| Year | 2013 | 2014 | 2015 | 2016 | 2017 | 2018 | 2019 | 2020 | 2021 | 2022 | 2023 | 2024 | 2025 | 2026 | Total |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| Papers | 1 | 1 | 2 | 3 | 3 | 2 | 2 | 2 | 2 | 3 | 5 | 5 | 4 | 7 | 42 |
+
+### Fig. 3(a): Neuronal Models
+
+| Category in Fig. 3(a) | Values in the CSV | n | Share in Fig. 3(a) (n / 42) | Papers (n / 42) |
+|---|---|---:|---:|---:|
+| SRM | Spiking Response Model (SRM) (17) | 17 | 40.5% | 40.5% |
+| LIF | Leaky Integrate-and-Fire (LIF) (16) | 16 | 38.1% | 38.1% |
+| IF | Integrate-and-Fire (IF) (4) | 4 | 9.5% | 9.5% |
+| Izhikevich | Izhikevich (2) | 2 | 4.8% | 4.8% |
+| Unidentified | Unidentified (2) | 2 | 4.8% | 4.8% |
+| PSN | Probabilistic Spiking Neuron (PSN) (1) | 1 | 2.4% | 2.4% |
+| **Total** | | **42** | **100%** | |
+
+### Fig. 3(b): Type of Delays
+
+| Category in Fig. 3(b) | Values in the CSV | n | Share in Fig. 3(b) (n / 44) | Papers (n / 42) |
+|---|---|---:|---:|---:|
+| Synaptic | Synaptic (28), Synaptic + Axonal (1) | 29 | 65.9% | 69.0% |
+| Axonal | Axonal (10), Synaptic + Axonal (1), Dendritic + Axonal (1) | 12 | 27.3% | 28.6% |
+| Skip-Connections | Skip-connection delays (2) | 2 | 4.5% | 4.8% |
+| Dendritic | Dendritic + Axonal (1) | 1 | 2.3% | 2.4% |
+| **Total** | | **44** | **100%** | |
+
+### Fig. 3(c): Codification Types
+
+| Category in Fig. 3(c) | Values in the CSV | n | Share in Fig. 3(c) (n / 43) | Papers (n / 42) |
+|---|---|---:|---:|---:|
+| Temporal-Coding | Temporal coding (35), Rate coding + Temporal coding (1) | 36 | 83.7% | 85.7% |
+| Rate-Coding | Rate coding (2), Rate coding + Temporal coding (1) | 3 | 7.0% | 7.1% |
+| Other | Other (2), Unidentified (1) | 3 | 7.0% | 7.1% |
+| Phase-Coding | Phase coding (1) | 1 | 2.3% | 2.4% |
+| **Total** | | **43** | **100%** | |
+
+### Fig. 3(d): Learning Types
+
+| Category in Fig. 3(d) | Values in the CSV | n | Share in Fig. 3(d) (n / 43) | Papers (n / 42) |
+|---|---|---:|---:|---:|
+| Supervised Learning | Supervised (33), Supervised + Unsupervised (1) | 34 | 79.1% | 81.0% |
+| Unsupervised Learning | Unsupervised (6), Supervised + Unsupervised (1) | 7 | 16.3% | 16.7% |
+| Auto-supervised Learning | Self-supervised (1) | 1 | 2.3% | 2.4% |
+| Reinforcement Learning | Reinforcement (1) | 1 | 2.3% | 2.4% |
+| **Total** | | **43** | **100%** | |
+
+### Fig. 3(e): Network Types
+
+| Category in Fig. 3(e) | Values in the CSV | n | Share in Fig. 3(e) (n / 47) | Papers (n / 42) |
+|---|---|---:|---:|---:|
+| Traditional Feedforward | Feedforward (17), Feedforward + Convolutional (3), Recurrent + Feedforward (2) | 22 | 46.8% | 52.4% |
+| Single-Layer | Single-layer (11) | 11 | 23.4% | 26.2% |
+| Convolutional | Convolutional (2), Feedforward + Convolutional (3) | 5 | 10.6% | 11.9% |
+| Recurrent | Recurrent (3), Recurrent + Feedforward (2) | 5 | 10.6% | 11.9% |
+| Skip-Connections | Skip-connections (3) | 3 | 6.4% | 7.1% |
+| Graph-like | Graph-like (1) | 1 | 2.1% | 2.4% |
+| **Total** | | **47** | **100%** | |
+
+### Fig. 3(f): Type of Problem
+
+| Category in Fig. 3(f) | Values in the CSV | n | Share in Fig. 3(f) (n / 43) | Papers (n / 42) |
+|---|---|---:|---:|---:|
+| Classification | Classification (33), Classification + Regression (1) | 34 | 79.1% | 81.0% |
+| Regression | Regression (3), Classification + Regression (1) | 4 | 9.3% | 9.5% |
+| Control | Control (2) | 2 | 4.7% | 4.8% |
+| Clustering | Clustering (1) | 1 | 2.3% | 2.4% |
+| Characteristics Extraction | Feature Extraction (1) | 1 | 2.3% | 2.4% |
+| Unidentified | Unidentified (1) | 1 | 2.3% | 2.4% |
+| **Total** | | **43** | **100%** | |
+
+### Fig. 3(g): Algorithms
+
+| Category in Fig. 3(g) | Values in the CSV | n | Share in Fig. 3(g) (n / 43) | Papers (n / 42) |
+|---|---|---:|---:|---:|
+| Surrogate Gradient | Surrogate Gradient (24) | 24 | 55.8% | 57.1% |
+| STDP | STDP (9), STDP + Temporal Adjustment (1) | 10 | 23.3% | 23.8% |
+| Neuroevolution | Neuroevolution (3) | 3 | 7.0% | 7.1% |
+| Temporal Adjustment | Temporal Adjustment (2), STDP + Temporal Adjustment (1) | 3 | 7.0% | 7.1% |
+| Minimum Squares | Recursive Least Squares (RLS) (1) | 1 | 2.3% | 2.4% |
+| EM | Expectation-Maximization (EM) (1) | 1 | 2.3% | 2.4% |
+| NAS | NAS (1) | 1 | 2.3% | 2.4% |
+| **Total** | | **43** | **100%** | |
+
+### Fig. 3(h): Trained Parameters
+
+| Category in Fig. 3(h) | Values in the CSV | n | Share in Fig. 3(h) (n / 42) | Papers (n / 42) |
+|---|---|---:|---:|---:|
+| Delays + Weights | Weights + Delays (28) | 28 | 66.7% | 66.7% |
+| Delays | Delays (4) | 4 | 9.5% | 9.5% |
+| Others | Other (4) | 4 | 9.5% | 9.5% |
+| D. + W. + Thresholds | Weights + Delays + Threshold (3) | 3 | 7.1% | 7.1% |
+| D. + W. + Topology | Weights + Delays + Topology (3) | 3 | 7.1% | 7.1% |
+| **Total** | | **42** | **100%** | |
+
+---
+
+## Citation
+
+```bibtex
+@inproceedings{cardenasrueda2026delay,
+  title     = {Delay Learning in Spiking Neural Networks: A Systematic Review},
+  author    = {C{\'a}rdenas-Rueda, Juan-Pablo and Ceardi, Jos{\'e} and Baladr{\'o}n, Javier},
+  booktitle = {45th International Conference of the Chilean Computer Science Society (JCC 2026)},
+  publisher = {IEEE},
+  year      = {2026}
+}
+```
+
+---
+
+## Acknowledgment
+
+This work was supported by the National Agency for Research and Development (ANID) of Chile through FONDECYT Regular Grant No. 1251455 "NeuroMetaEvo: Integrating Metaheuristic Techniques with Neuroscience for Advanced Neuromorphic Algorithm Design".
