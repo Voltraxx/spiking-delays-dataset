@@ -4,6 +4,9 @@ This repository contains the dataset of the paper **"Delay Learning in Spiking N
 
 The review follows the PRISMA 2020 guidelines and covers primary, software-based studies in which the transmission delays of spiking neural networks (SNNs) are trainable parameters. The dataset lists the 42 included studies and their classification along the eight dimensions of Fig. 3 of the paper.
 
+> [!NOTE]
+> **`Surrogate Gradient` means gradient-based methods.** In this dataset and in Fig. 3(g) of the paper, the `Surrogate Gradient` category groups all gradient-based methods: surrogate-gradient training and other gradients, such as exact spike-time gradients (SpikeProp and its extensions, EventProp) and gradients computed on spike-train kernels. For each of these 24 studies, the `Notes` column starts with `Gradient-based (...)` and states the type of gradient used.
+
 ---
 
 ## Repository Structure
@@ -93,7 +96,7 @@ Each study has exactly one value per column. Values joined with `+` mean that th
 
 ### 1. Algorithm (Fig. 3g)
 Method used to learn or optimize the delays.
-* **Surrogate Gradient:** gradient-descent and error-backpropagation methods. The label follows Fig. 3(g) of the paper, where this category groups every gradient-based method: surrogate-gradient training (e.g., BPTT with surrogate derivatives, SLAYER) and other gradients, such as exact spike-time gradients (SpikeProp and its extensions, EventProp) and gradients computed on spike-train kernels. The `Notes` column states the type of gradient when the study makes it explicit.
+* **Surrogate Gradient (gradient-based methods):** gradient-descent and error-backpropagation methods. The label follows Fig. 3(g) of the paper, where this category groups every gradient-based method: surrogate-gradient training (e.g., BPTT with surrogate derivatives, SLAYER) and other gradients, such as exact spike-time gradients (SpikeProp and its extensions, EventProp) and gradients computed on spike-train kernels. The `Notes` column of each of these studies starts with `Gradient-based (...)` and states the type of gradient.
 * **STDP:** local plasticity rules driven by the relative timing of pre- and postsynaptic spikes, including delay-specific variants. They are used both in unsupervised settings and in supervised schemes that add a teacher signal (e.g., ReSuMe-based methods).
 * **Temporal Adjustment:** rules that shift the delays directly from temporal differences or distributions, without backpropagated gradients.
 * **STDP + Temporal Adjustment:** combination of both families.
@@ -244,7 +247,7 @@ In Fig. 3 of the paper, a study with a combined value (e.g., `Synaptic + Axonal`
 
 | Category in Fig. 3(g) | Values in the CSV | n | Share in Fig. 3(g) (n / 43) | Papers (n / 42) |
 |---|---|---:|---:|---:|
-| Surrogate Gradient | Surrogate Gradient (24) | 24 | 55.8% | 57.1% |
+| Surrogate Gradient (gradient-based methods) | Surrogate Gradient (24) | 24 | 55.8% | 57.1% |
 | STDP | STDP (9), STDP + Temporal Adjustment (1) | 10 | 23.3% | 23.8% |
 | Neuroevolution | Neuroevolution (3) | 3 | 7.0% | 7.1% |
 | Temporal Adjustment | Temporal Adjustment (2), STDP + Temporal Adjustment (1) | 3 | 7.0% | 7.1% |
@@ -263,6 +266,24 @@ In Fig. 3 of the paper, a study with a combined value (e.g., `Synaptic + Axonal`
 | D. + W. + Thresholds | Weights + Delays + Threshold (3) | 3 | 7.1% | 7.1% |
 | D. + W. + Topology | Weights + Delays + Topology (3) | 3 | 7.1% | 7.1% |
 | **Total** | | **42** | **100%** | |
+
+---
+
+## Errata
+
+The counts (n) reported in the paper match this dataset, except for the PSN neuron model. The table lists the passages of the paper whose numbers differ from the values computed above. The last row clarifies the definition of `Surrogate Gradient`.
+
+| Section of the paper | Published text | Value from this dataset |
+|---|---|---|
+| IV-1 (neuron models) | "Specialized dynamics, such as the Probabilistic Spiking Neuron (PSN), comprise the remaining 5% (n = 2) of the corpus." | PSN: n = 1 (2.4%). The remaining 3 studies (7.1%) are PSN (1) and Unidentified (2, 4.8%). |
+| IV-1 and V (neuron models) | Izhikevich: "5% (n = 2)" | 4.8% (2 of 42), rounded to 5% in the text. |
+| IV-2 (delays) | "Synaptic Delays account for 65.9% (n = 29) of the papers"; "Axonal Delays comprises 27.3% (n = 12)" | 65.9% and 27.3% are shares of the 44 delay labels of Fig. 3(b). As shares of the 42 studies: Synaptic 69.0%, Axonal 28.6%. |
+| IV-2 (delays) | "The remaining 7% (n = 3) covers specialized structural paradigms, including combined Synaptic+Axonal layers, Dendritic+Axonal compartmental boundaries, or specialized skip-connection transmission buffers." | The remaining 3 labels (6.8%) are Dendritic (1) and Skip-connection delays (2). The Synaptic + Axonal study is counted under Synaptic and Axonal, and the Dendritic + Axonal study under Dendritic and Axonal. |
+| IV-3 (coding) | "Rate-Coding paradigms are strictly confined to 7% (n = 3) of the corpus, with an additional 2.5% (n = 1) implementing a hybrid Rate-Coding + Temporal scheme." | The n = 3 already includes the hybrid study (2 Rate coding + 1 Rate coding + Temporal coding). The hybrid study is 1 of 43 labels: 2.3%. |
+| IV-3 (coding) | "Phase-Coding layouts comprise 2.5% (n = 1)" | 2.3% (1 of 43). |
+| IV-4 (learning) | Reinforcement and self-supervised learning: "combined representing only 5% (n = 2)" | 4.7% (2 of 43), rounded to 5% in the text. |
+| IV-5 (networks) | "The final 8.6% (n = 4) consists of emerging architectural variations" | 8.5% (4 of 47). |
+| II-A, II-F and V (algorithms) | II-A: "surrogate gradient methods that approximate the non-differentiable spike activation with smooth, continuous functions during the backward pass" (II-F gives the same definition); V: "supervised surrogate gradient descent represents the predominant training paradigm at 55.8% of the literature, it relies on continuous approximations of non-differentiable spike activations" | This definition is narrower than the `Surrogate Gradient` category of Fig. 3(g). The category groups all gradient-based methods: besides surrogate-gradient training, it includes other gradients, such as exact spike-time gradients (SpikeProp and its extensions, EventProp) and gradients computed on spike-train kernels. The count in IV-7 and Fig. 3(g) (n = 24, 55.8%) is correct for this category. The `Notes` column states the type of gradient used by each study. |
 
 ---
 
